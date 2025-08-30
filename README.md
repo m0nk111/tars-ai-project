@@ -19,6 +19,17 @@ A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark 
 
 ## 🛠️ Installation
 
+## ✅ Current Status
+- ✅ Ubuntu 24.04 KVM Guest
+- ✅ NVIDIA RTX 3060 GPU Passthrough
+- ✅ CUDA 12.9 + PyTorch 2.8.0
+- ✅ Python 3.12 Virtual Environment
+- ✅ FastAPI Web Interface
+- ✅ Dark Mode UI
+- 🔄 AI Model Integration (Next)
+- 🔄 ChromaDB Persistent Memory
+- 🔄 TTS/Voice Features
+
 ```bash
 # Clone the repository
 git clone https://github.com/m0nk111/tars-ai-project.git
@@ -29,7 +40,23 @@ sudo bash install/main-install.sh
 ```
 
 ## 📁 Project Structure
-
+```
+tars-ai-project/
+├── 📁 scripts/          # Maintenance and utility scripts
+├── 📁 generated/        # Generated data (not in git)
+│   ├── 📁 models/       # AI models
+│   ├── 📁 chromadb/     # Vector database
+│   └── 📁 uploads/      # Uploaded files
+├── 📁 web-ui/           # Web interface
+│   ├── 📁 static/       # CSS, JS, assets
+│   ├── 📁 templates/    # HTML templates
+│   └── main.py          # FastAPI application
+├── 📁 install/          # Installation scripts
+├── 📁 docs/            # Documentation
+├── 📁 services/        # Systemd service files
+├── venv/               # Python virtual environment
+├── requirements.txt    # Python dependencies
+└── README.md          # This file
 ```
 tars-ai-project/
 ├── scripts/          # Development and maintenance scripts

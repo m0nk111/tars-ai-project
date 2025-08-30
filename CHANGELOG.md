@@ -25,3 +25,16 @@
 
 ### Changed
 - Improved project documentation
+
+## 2025-08-30
+### Added
+- Successful NVIDIA GPU passthrough to KVM guest
+- CUDA 12.9 and PyTorch 2.8.0 with GPU support
+- FastAPI web interface with dark mode
+- Complete Python environment with all dependencies
+
+### Verified
+- GPU Detection: NVIDIA RTX 3060 12GB
+- CUDA: Version 12.9
+- PyTorch: GPU acceleration working
+- Web Interface: Running on port 8000
