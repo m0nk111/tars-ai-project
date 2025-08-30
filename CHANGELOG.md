@@ -38,3 +38,24 @@
 - CUDA: Version 12.9
 - PyTorch: GPU acceleration working
 - Web Interface: Running on port 8000
+## [2025-08-30] - Version 1.2.0
+### Added
+- Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
+- Model persistence (remembers last used model between sessions)
+- File upload API with drag & drop support
+- Code formatting with copy and download buttons
+- Modern UI with improved styling
+- WebSocket-based real-time communication
+- Systemd service configuration
+
+### Enhanced
+- Complete English codebase compliance
+- Improved error handling and logging
+- Better responsive design
+- Enhanced system statistics display
+
+### Technical
+- Ollama integration for model management
+- FastAPI endpoints for file management
+- JavaScript improvements for real-time updates
+- Python path configuration fixes

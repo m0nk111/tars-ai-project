@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TARS AI Assistant</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>TARS AI Assistant</h1>
-            <div class="header-game" id="flappy-bird">
-                <!-- Flappy Bird game will go here -->
+            <div class="header-controls">
+                <select id="model-selector" class="model-selector">
+                    <option value="">Loading models...</option>
+                </select>
             </div>
         </header>
         
@@ -19,14 +22,24 @@
             <div class="chat-container">
                 <div class="messages" id="messages"></div>
                 <div class="input-area">
-                    <input type="text" id="message-input" placeholder="Ask TARS something...">
-                    <button id="send-button">Send</button>
-                    <input type="file" id="file-upload" accept=".txt,.pdf,.jpg,.jpeg,.png">
-                    <button id="upload-button">Upload</button>
+                    <div class="file-drop-zone" id="file-drop-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drop files here or click to upload</p>
+                        <input type="file" id="file-upload" multiple style="display: none;">
+                    </div>
+                    <div class="input-controls">
+                        <input type="text" id="message-input" placeholder="Ask TARS something...">
+                        <button id="send-button" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <div id="system-stats" class="system-stats"></div>
+    
     <script src="/static/js/app.js"></script>
 </body>
 </html>

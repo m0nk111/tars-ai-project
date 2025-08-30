@@ -1,12 +1,15 @@
-import requests
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pathlib import Path
+import requests
 import asyncio
 import json
 import uuid
+import psutil
+import subprocess
+import time
 
 app = FastAPI(title="TARS AI Assistant", version="1.0.0")
 
@@ -15,25 +18,187 @@ BASE_DIR = Path(__file__).parent
 STATIC_DIR = BASE_DIR / "static"
 TEMPLATES_DIR = BASE_DIR / "templates"
 
+# Current model settings
+current_model = "gemma2:2b"
+
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
+def get_available_models():
+    """Dynamically fetch available models from Ollama"""
+    try:
+        response = requests.get("http://localhost:11434/api/tags", timeout=10)
+        response.raise_for_status()
+        models_data = response.json()
+        
+        available_models = {}
+        for model in models_data.get("models", []):
+            model_name = model.get("name", "")
+            # Format model name for display
+            display_name = model_name.replace(":", " - ").title()
+            available_models[model_name] = display_name
+        
+        return available_models
+    except requests.exceptions.RequestException:
+        # Fallback to basic models if Ollama is not reachable
+        return {
+            "gemma2:2b": "Gemma 2 - 2B",
+            "deepseek-coder:6.7b": "Deepseek Coder - 6.7B"
+        }
+
+def get_system_stats():
+    """Get real-time system statistics"""
+    try:
+        # GPU stats (if NVIDIA)
+        gpu_stats = {}
+        try:
+            nvidia_smi = subprocess.check_output([
+                'nvidia-smi', '--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu',
+                '--format=csv,noheader,nounits'
+            ], text=True)
+            gpu_data = nvidia_smi.strip().split(', ')
+            gpu_stats = {
+                'gpu_usage': f"{gpu_data[0]}%",
+                'vram_used': f"{gpu_data[1]} MB",
+                'vram_total': f"{gpu_data[2]} MB",
+                'gpu_temp': f"{gpu_data[3]}°C"
+            }
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            gpu_stats = {'gpu_available': False}
+        
+        # System stats
+        return {
+            'cpu_usage': f"{psutil.cpu_percent()}%",
+            'memory_usage': f"{psutil.virtual_memory().percent}%",
+            'memory_used': f"{psutil.virtual_memory().used // (1024**2)} MB",
+            'memory_total_mb': psutil.virtual_memory().total // (1024**2),
+            'memory_display': f"{psutil.virtual_memory().used // (1024**2)}MB / {psutil.virtual_memory().total // (1024**2)}MB ({psutil.virtual_memory().percent}%)",
+            'memory_used_mb': psutil.virtual_memory().used // (1024**2),
+            'memory_percent': psutil.virtual_memory().percent,
+            'memory_total': f"{psutil.virtual_memory().total // (1024**2)} MB",
+            'current_model': current_model,
+            'model_name': get_available_models().get(current_model, current_model),
+            'timestamp': time.time(),
+            **gpu_stats
+        }
+    except Exception as e:
+        return {'error': str(e)}
+
+def get_ai_response(user_input):
+    """Use Ollama to generate AI response"""
+    global current_model
+    try:
+        # Create prompt for the AI assistant
+        prompt = f"You are TARS, a helpful AI assistant. Answer the following question clearly and professionally.\\n\\nUser: {user_input}\\nTARS:"
+        
+        # Prepare data for Ollama API request
+        ollama_data = {
+            "model": current_model,
+            "prompt": prompt,
+            "stream": False
+        }
+        
+        # Send request to Ollama server
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json=ollama_data,
+            timeout=120
+        )
+        
+        # Check if request was successful
+        response.raise_for_status()
+        
+        # Extract response from JSON result
+        result = response.json()
+        return result.get("response", "No response received from the AI model.")
+        
+    except requests.exceptions.RequestException as e:
+        return f"Error communicating with AI model: {str(e)}"
+    except Exception as e:
+        return f"Unexpected error occurred: {str(e)}"
+
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
-    return templates.TemplateResponse("index.html", {"request": {}})
+async def read_root(request: Request):
+    """Serve the main chat interface with system stats"""
+    stats = get_system_stats()
+    available_models = get_available_models()
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "system_stats": stats,
+        "available_models": available_models
+    })
+
+@app.get("/api/stats")
+async def get_stats():
+    """API endpoint for system statistics"""
+    return JSONResponse(get_system_stats())
+
+@app.get("/api/models")
+async def get_models():
+    """API endpoint for available models"""
+    return JSONResponse(get_available_models())
+
+@app.post("/api/switch-model")
+async def switch_model(request: Request):
+    """API endpoint to switch AI model"""
+    global current_model
+    try:
+        data = await request.json()
+        new_model = data.get("model")
+        available_models = get_available_models()
+        
+        if new_model in available_models:
+            current_model = new_model
+            return JSONResponse({
+                "status": "success",
+                "message": f"Model switched to {new_model}",
+                "model": new_model
+            })
+        else:
+            return JSONResponse({
+                "status": "error",
+                "message": f"Model not available: {new_model}"
+            }, status_code=400)
+            
+    except Exception as e:
+        return JSONResponse({
+            "status": "error",
+            "message": str(e)
+        }, status_code=500)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    """Handle WebSocket connections for real-time chat"""
     await websocket.accept()
     try:
         while True:
+            # Receive message from client
             data = await websocket.receive_text()
-            # Process AI response here
-            response = {"message": "Hello from TARS!", "type": "response"}
-            await websocket.send_text(json.dumps(response))
+            message_data = json.loads(data)
+            
+            if message_data.get("type") == "get_stats":
+                # Send system stats
+                stats = get_system_stats()
+                await websocket.send_text(json.dumps({
+                    "type": "system_stats",
+                    "data": stats
+                }))
+            else:
+                # Handle chat message
+                user_message = message_data["message"]
+                ai_response = get_ai_response(user_message)
+                
+                # Send response back to client
+                response_data = {
+                    "message": ai_response,
+                    "type": "response",
+                    "model": current_model
+                }
+                await websocket.send_text(json.dumps(response_data))
+            
     except WebSocketDisconnect:
-        print("Client disconnected")
+        print("Client disconnected from WebSocket")
 
 if __name__ == "__main__":
     import uvicorn
