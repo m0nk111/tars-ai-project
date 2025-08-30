@@ -44,6 +44,15 @@ CREATE TABLE conversations (
 
 ## 🛠️ Installation
 ```bash
+# Volledige installatie
+sudo ./scripts/install.sh --all
+# Alle services status
+sudo systemctl status tars-backend tars-frontend nginx
+# Logs bekijken
+sudo journalctl -u tars-backend -f --no-pager
+sudo journalctl -u tars-frontend -f --no-pager
+sudo tail -f /var/log/nginx/tars-access.log
+
 # Clone the repository
 git clone https://github.com/m0nk111/tars-ai-project.git
 cd tars-ai-project
@@ -177,6 +186,15 @@ CREATE TABLE conversations (
 - 🔄 TTS/Voice Features
 
 ```bash
+# Volledige installatie
+sudo ./scripts/install.sh --all
+# Alle services status
+sudo systemctl status tars-backend tars-frontend nginx
+# Logs bekijken
+sudo journalctl -u tars-backend -f --no-pager
+sudo journalctl -u tars-frontend -f --no-pager
+sudo tail -f /var/log/nginx/tars-access.log
+
 # Clone the repository
 git clone https://github.com/m0nk111/tars-ai-project.git
 cd tars-ai-project
