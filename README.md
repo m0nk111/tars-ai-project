@@ -75,6 +75,11 @@ tars-ai-project/
 - GPU: NVIDIA RTX 3060 (12 GB GDDR6)
 - Storage: 1 TB NVMe SSD
 
+## 🌐 Language Policy
+- All code and documentation must be written in English
+- This ensures international collaboration and maintainability
+- Only user interface elements may be localized for different languages
+
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

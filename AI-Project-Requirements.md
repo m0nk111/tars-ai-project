@@ -86,3 +86,10 @@ tars-ai-project/
 ---
 
 *This document will be updated as the project evolves. Refer to the changelog for progress tracking.*
+
+## Code Language Requirement
+- All code, comments, and documentation must be written in English
+- Variable names, function names, and class names must use English terminology
+- Error messages and user-facing text should be in English
+- Only user interface elements may be translated to other languages
+- This ensures international collaboration and maintainability
