@@ -1,8 +1,9 @@
 # TARS AI Assistant Project
+![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)
 
-![TARS(https://img.shields.io/badge/Project-TARS_AI-blue)]
-![License(https://img.shields.io/badge/License-MIT-green)]
-![Python(https://img.shields.io/badge/Python-3.12-blue)]
 [![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)]
 
 A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
