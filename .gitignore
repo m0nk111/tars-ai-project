@@ -247,3 +247,4 @@ Thumbs.db
 *.weights
 *.bin
 main
+conversation_memory.db
