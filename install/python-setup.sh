@@ -40,11 +40,14 @@ pip install --upgrade \
 log_info "Installing AI/ML packages..."
 pip install --upgrade \
     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 \
-    transformers \
     datasets \
     accelerate \
     sentencepiece \
     protobuf
+
+# Install Transformers apart (soms gevoelig voor volgorde)
+log_info "Installing Transformers..."
+pip install --upgrade transformers
 
 # Install ChromaDB for persistent memory
 log_info "Installing ChromaDB..."
