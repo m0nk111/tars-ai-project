@@ -7,6 +7,30 @@
 A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
 
 ## 🚀 Features
+\n## 🗃️ Persistent Memory with SQLite
+
+The project now uses SQLite for persistent conversation storage instead of in-memory storage.
+
+### Features:
+- Conversations persist between application restarts
+- SQLite database stored in conversation_memory.db
+- Automatic database initialization
+- Efficient storage and retrieval of chat history
+
+### Database Structure:
+```sql
+CREATE TABLE conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### API Endpoints:
+- GET /api/conversations - Retrieve conversation history
+- All chat messages are automatically stored in SQLite
 - **Dark mode interface** similar to chat.deepseek.com
 - **File upload and parsing capabilities** with drag & drop support
 - **Persistent conversation memory** with ChromaDB (upcoming)
@@ -105,6 +129,30 @@ See [CHANGELOG.md](CHANGELOG.md) for recent updates and features.
 A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
 
 ## 🚀 Features
+\n## 🗃️ Persistent Memory with SQLite
+
+The project now uses SQLite for persistent conversation storage instead of in-memory storage.
+
+### Features:
+- Conversations persist between application restarts
+- SQLite database stored in conversation_memory.db
+- Automatic database initialization
+- Efficient storage and retrieval of chat history
+
+### Database Structure:
+```sql
+CREATE TABLE conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### API Endpoints:
+- GET /api/conversations - Retrieve conversation history
+- All chat messages are automatically stored in SQLite
 
 - Dark mode interface similar to chat.deepseek.com
 - File upload and parsing capabilities
