@@ -2,24 +2,26 @@
 
 ## [Unreleased]
 ### Added
-- Nieuwe gestructureerde project directory
-- Uitgebreide .gitignore voor gegenereerde bestanden
-- Gestructureerde documentatie layout
+- New structured project directory
+- Comprehensive .gitignore for generated files
+- Structured documentation layout
+- Main README.md with project overview
+- Utility functions script
 
 ### Changed
-- Complete herstructurering van project directory
-- Scheiding van scripts, services, en gegenereerde data
-- Verbeterde documentatie structuur
+- Complete project directory restructuring
+- Separation of scripts, services, and generated data
+- Improved documentation structure
 
 ### Removed
-- Alle gegenereerde bestanden uit vorige versie
-- Onnodige backup bestanden
+- All generated files from previous version
+- Unnecessary backup files
 
 ## 2025-08-30
 ### Added
 - Project requirements document (AI-Project-Requirements.md)
-- Initiële project directory structuur
+- Initial project directory structure
 - Start development planning
 
 ### Changed
-- Verbeterde project documentatie
+- Improved project documentation
