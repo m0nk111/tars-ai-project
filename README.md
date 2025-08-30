@@ -90,6 +90,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For support and questions, please open an issue in the GitHub repository.
 
 ## 🔄 Changelog
+
+## 🤖 AI Models
+For detailed information about recommended AI models, see [AI_MODELS.md](docs/AI_MODELS.md)
 See [CHANGELOG.md](CHANGELOG.md) for recent updates and features.
 
 
