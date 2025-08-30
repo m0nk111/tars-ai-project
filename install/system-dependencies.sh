@@ -35,12 +35,12 @@ apt-get install -y \
     vim \
     nano
 
-# Install Python and development tools
+# Install Python and development tools (Ubuntu 24.04 uses Python 3.12)
 log_info "Installing Python and development tools..."
 apt-get install -y \
-    python3.10 \
-    python3.10-venv \
-    python3.10-dev \
+    python3 \
+    python3-venv \
+    python3-dev \
     python3-pip \
     python3-setuptools \
     python3-wheel

@@ -13,9 +13,9 @@ log_info "Starting Python environment setup..."
 PROJECT_ROOT=$(get_project_root)
 log_info "Project root: $PROJECT_ROOT"
 
-# Create Python virtual environment
+# Create Python virtual environment (Ubuntu 24.04 uses Python 3.12)
 log_info "Creating Python virtual environment..."
-python3.10 -m venv "$PROJECT_ROOT/venv"
+python3 -m venv "$PROJECT_ROOT/venv"
 
 # Activate virtual environment
 source "$PROJECT_ROOT/venv/bin/activate"
@@ -39,7 +39,7 @@ pip install --upgrade \
 # Install AI/ML packages
 log_info "Installing AI/ML packages..."
 pip install --upgrade \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 \
+    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 \
     transformers \
     datasets \
     accelerate \
