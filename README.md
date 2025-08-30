@@ -4,8 +4,6 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)
 
-[![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)]
-
 A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
 
 ## 🚀 Features
