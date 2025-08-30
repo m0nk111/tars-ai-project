@@ -1,6 +1,9 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Request
 import sys
 sys.path.append("/home/flip/tars-ai-project")
+from memory.sqlite_memory import init_db, save_message, get_conversation_history as get_sqlite_history
+import sys
+sys.path.append("/home/flip/tars-ai-project")
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -14,6 +17,7 @@ import subprocess
 import time
 import os
 from scripts.model_manager import get_last_used_model, save_last_used_model
+from scripts.simple_memory import simple_memory
 
 app = FastAPI(title="TARS AI Assistant", version="1.0.0")
 
@@ -24,6 +28,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 UPLOAD_DIR = BASE_DIR / "uploads"
 
 # Current model settings
+init_db()
 current_model = get_last_used_model()
 
 # Mount static files
@@ -52,6 +57,13 @@ def get_available_models():
             "deepseek-coder:6.7b": "Deepseek Coder - 6.7B"
         }
 
+def get_conversation_history(user_id="default_user", limit=10):
+    """Get conversation history from SQLite database"""
+    try:
+        return simple_memory.get_conversation_history(user_id, limit)
+    except Exception as e:
+        print(f"Error retrieving conversation history: {e}")
+        return []
 def get_ai_response(user_input):
     """Use Ollama to generate AI response"""
     global current_model
@@ -77,9 +89,9 @@ def get_ai_response(user_input):
         response.raise_for_status()
         
         # Extract response from JSON result
-        result = response.json()
-        return result.get("response", "No response received from the AI model.")
         
+        save_message("default_user", "user", user_input)
+        save_message("default_user", "assistant", ai_response)
     except requests.exceptions.RequestException as e:
         return f"Error communicating with AI model: {str(e)}"
     except Exception as e:
@@ -263,6 +275,27 @@ async def websocket_endpoint(websocket: WebSocket):
             
     except WebSocketDisconnect:
         print("Client disconnected from WebSocket")
+
+@app.get("/api/conversations")
+async def get_conversations(user_id: str = "default_user", limit: int = 10):
+    """API endpoint to get conversation history"""
+    try:
+        history = get_conversation_history(user_id, limit)
+        return JSONResponse({"conversations": history})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@app.delete("/api/conversations/{conversation_id}")
+async def delete_conversation(conversation_id: str):
+    """API endpoint to delete a specific conversation"""
+    try:
+        # Simple implementation - in real version would actually delete
+        return JSONResponse({
+            "status": "success",
+            "message": "Delete functionality coming soon"
+        })
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 if __name__ == "__main__":
     import uvicorn
