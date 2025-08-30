@@ -17,7 +17,6 @@ import subprocess
 import time
 import os
 from scripts.model_manager import get_last_used_model, save_last_used_model
-from scripts.simple_memory import simple_memory
 
 app = FastAPI(title="TARS AI Assistant", version="1.0.0")
 
@@ -60,16 +59,17 @@ def get_available_models():
 def get_conversation_history(user_id="default_user", limit=10):
     """Get conversation history from SQLite database"""
     try:
-        return simple_memory.get_conversation_history(user_id, limit)
+        return get_sqlite_history(user_id, limit)
     except Exception as e:
         print(f"Error retrieving conversation history: {e}")
         return []
-def get_ai_response(user_input):
-    """Use Ollama to generate AI response"""
-    global current_model
+def get_conversation_history(user_id="default_user", limit=10):
+    """Get conversation history from SQLite database"""
     try:
-        # Create prompt for the AI assistant
-        prompt = f"You are TARS, a helpful AI assistant. Answer the following question clearly and professionally.\\n\\nUser: {user_input}\\nTARS:"
+        return get_sqlite_history(user_id, limit)
+    except Exception as e:
+        print(f"Error retrieving conversation history: {e}")
+        return []
         
         # Prepare data for Ollama API request
         ollama_data = {
