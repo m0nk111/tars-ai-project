@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, R
 import sys
 sys.path.append("/home/flip/tars-ai-project")
 from memory.sqlite_memory import init_db, save_message, get_conversation_history as get_sqlite_history
+from memory.sqlite_memory import init_db, save_message, get_conversation_history as get_sqlite_history
 import sys
 sys.path.append("/home/flip/tars-ai-project")
 from fastapi.staticfiles import StaticFiles
@@ -27,6 +28,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 UPLOAD_DIR = BASE_DIR / "uploads"
 
 # Current model settings
+init_db()
 init_db()
 current_model = get_last_used_model()
 
@@ -55,12 +57,13 @@ def get_available_models():
             "gemma2:2b": "Gemma 2 - 2B",
             "deepseek-coder:6.7b": "Deepseek Coder - 6.7B"
         }
-
 def get_conversation_history(user_id="default_user", limit=10):
     """Get conversation history from SQLite database"""
     try:
         return get_sqlite_history(user_id, limit)
     except Exception as e:
+        print(f"Error retrieving conversation history: {e}")
+        return []
         print(f"Error retrieving conversation history: {e}")
         return []
 def get_conversation_history(user_id="default_user", limit=10):
@@ -88,13 +91,9 @@ def get_conversation_history(user_id="default_user", limit=10):
         # Check if request was successful
         response.raise_for_status()
         
-        # Extract response from JSON result
-        
+    except Exception as e:
         save_message("default_user", "user", user_input)
         save_message("default_user", "assistant", ai_response)
-    except requests.exceptions.RequestException as e:
-        return f"Error communicating with AI model: {str(e)}"
-    except Exception as e:
         return f"Unexpected error occurred: {str(e)}"
 
 def get_system_stats():
@@ -263,7 +262,9 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 # Handle chat message
                 user_message = message_data["message"]
+                save_message("websocket", "user", user_message)
                 ai_response = get_ai_response(user_message)
+                save_message("websocket", "assistant", ai_response)
                 
                 # Send response back to client
                 response_data = {
