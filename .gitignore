@@ -246,3 +246,4 @@ Thumbs.db
 *.model
 *.weights
 *.bin
+main
