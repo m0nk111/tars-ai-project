@@ -270,3 +270,7 @@ For support and questions, please open an issue in the GitHub repository.
 - API Health: http://192.168.1.26/api/health
 - Direct Health: http://192.168.1.26/health
 - Backend Direct: http://localhost:8002/health
+
+---
+
+**Note**: This project is under active development. Features and documentation may change.
