@@ -1,16 +1,16 @@
-# TARS AI - Essentiële Shell Commando's
+# TARS AI - Essential Shell Commands
 
-## 📋 Dagelijkse Operationele Commando's
+## 📋 Daily Operations
 
 ### Service Management
 ```bash
-# Start alle services
+# Start all services
 sudo systemctl start tars-backend tars-frontend nginx
 
-# Stop alle services
+# Stop all services
 sudo systemctl stop tars-backend tars-frontend nginx
 
-# Herstart specifieke service
+# Restart specific service
 sudo systemctl restart tars-backend
 
 # Status check
@@ -19,12 +19,12 @@ sudo systemctl status tars-backend --no-pager -l
 
 ### Log Inspection
 ```bash
-# Real-time logs volgen
+# Follow logs in real-time
 sudo tail -f /var/log/tars/backend.log
 sudo tail -f /var/log/tars/frontend.log
 sudo tail -f /var/log/nginx/tars-access.log
 
-# Logs filteren op errors
+# Filter logs for errors
 sudo journalctl -u tars-backend --since "1 hour ago" | grep -i error
 ```
 
@@ -33,25 +33,25 @@ sudo journalctl -u tars-backend --since "1 hour ago" | grep -i error
 # GPU status
 nvidia-smi --query-gpu=timestamp,name,utilization.gpu,memory.used --format=csv -l 5
 
-# Geheugen gebruik
+# Memory usage
 watch -n 2 "free -h && echo '---' && df -h /"
 
 # Process monitoring
 top -b -n 1 | head -20
 ```
 
-## 🛠️ Installatie & Onderhoud
+## 🛠️ Installation & Maintenance
 
-### Installatie Commando's
+### Installation Commands
 ```bash
-# Volledige installatie
+# Full installation
 sudo ./scripts/install.sh --all --yes
 
-# Individuele componenten
+# Individual components
 sudo ./scripts/install.sh --backend
 sudo ./scripts/install.sh --frontend
 sudo ./scripts/install.sh --nginx
 
-# Configuratie herladen
+# Reload configuration
 sudo nginx -t && sudo systemctl reload nginx
 ```

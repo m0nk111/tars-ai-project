@@ -2,42 +2,21 @@
 
 ## [Unreleased]
 ### Added
-- New structured project directory
+- Project requirements document ([AI-Project-Requirements.md](AI-Project-Requirements.md))
+- Structured project directory
 - Comprehensive .gitignore for generated files
-- Structured documentation layout
 - Main README.md with project overview
 - Utility functions script
 
 ### Changed
 - Complete project directory restructuring
-- Separation of scripts, services, and generated data
 - Improved documentation structure
+- Separation of scripts, services, and generated data
 
 ### Removed
 - All generated files from previous version
 - Unnecessary backup files
 
-## 2025-08-30
-### Added
-- Project requirements document (AI-Project-Requirements.md)
-- Initial project directory structure
-- Start development planning
-
-### Changed
-- Improved project documentation
-
-## 2025-08-30
-### Added
-- Successful NVIDIA GPU passthrough to KVM guest
-- CUDA 12.9 and PyTorch 2.8.0 with GPU support
-- FastAPI web interface with dark mode
-- Complete Python environment with all dependencies
-
-### Verified
-- GPU Detection: NVIDIA RTX 3060 12GB
-- CUDA: Version 12.9
-- PyTorch: GPU acceleration working
-- Web Interface: Running on port 8000
 ## [2025-08-30] - Version 1.2.0
 ### Added
 - Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
@@ -60,15 +39,36 @@
 - JavaScript improvements for real-time updates
 - Python path configuration fixes
 
-## [0.9.0] - 2025-08-31 (Live)
-### ✅ Operationeel
-- **Backend Service**: FastAPI op poort 8002
-- **Nginx Config**: Reverse proxy met correcte routing
-- **Frontend Fix**: 403 Forbidden opgelost
-- **API Endpoints**: /health en /api/health werkend
-- **Systemd Integration**: Volledige service management
+## [2025-08-30]
+### Added
+- Successful NVIDIA GPU passthrough to KVM guest
+- CUDA 12.9 and PyTorch 2.8.0 with GPU support
+- FastAPI web interface with dark mode
+- Complete Python environment with all dependencies
 
-### 🌐 Netwerk
-- **Server**: 192.168.1.26
-- **Ports**: 8002 (backend), 80 (frontend)
-- **URLs**: http://192.168.1.26/health
+### Verified
+- GPU Detection: NVIDIA RTX 3060 12GB
+- CUDA: Version 12.9
+- PyTorch: GPU acceleration working
+- Web Interface: Running on port 8000
+
+## [0.9.0] - 2025-08-31 (Live)
+### ✅ Operational
+- Backend Service: FastAPI on port 8002
+- Nginx Config: Reverse proxy with correct routing
+- Frontend Fix: 403 Forbidden resolved
+- API Endpoints: /health and /api/health working
+- Systemd Integration: Full service management
+
+### 🌐 Network
+- Server: 192.168.1.26
+- Ports: 8002 (backend), 80 (frontend)
+- URLs: http://192.168.1.26/health
+
+---
+
+## Requirements Alignment
+
+- All features and structure now match [AI-Project-Requirements.md](AI-Project-Requirements.md)
+- Hardware and software status tracked in [STATUS.md](STATUS.md)
+- Documentation and changelog updated for international collaboration

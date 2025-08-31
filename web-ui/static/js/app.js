@@ -1,13 +1,15 @@
 // TARS AI Assistant - Enhanced with file upload, code formatting, and model persistence
 
-document.addEventListener('DOMContentLoaded', function() {
-    const messageInput = document.getElementById('message-input');
-    const sendButton = document.getElementById('send-button');
-    const messagesContainer = document.getElementById('messages');
-    const fileUpload = document.getElementById('file-upload');
-    const fileDropZone = document.getElementById('file-drop-zone');
-    const modelSelector = document.getElementById('model-selector');
-    const statsContainer = document.getElementById('system-stats');
+document.addEventListener('DOMContentLoaded', () => {
+    // Cache DOM elements once
+    const $ = id => document.getElementById(id);
+    const messageInput = $('message-input');
+    const sendButton = $('send-button');
+    const messagesContainer = $('messages');
+    const fileUpload = $('file-upload');
+    const fileDropZone = $('file-drop-zone');
+    const modelSelector = $('model-selector');
+    const statsContainer = $('system-stats');
     
     // Establish WebSocket connection
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -137,29 +139,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function formatMessage(text) {
-        // Format code blocks
-        text = text.replace(/```(\w+)?\s([\s\S]*?)```/g, (match, lang, code) => {
-            return `
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>${lang || 'code'}</span>
-                        <div class="code-actions">
-                            <button class="code-btn" onclick="copyToClipboard(this)">Copy</button>
-                            <button class="code-btn" onclick="downloadCode(this)">Download</button>
-                        </div>
+        // Code blocks
+        text = text.replace(/```(\w+)?\s([\s\S]*?)```/g, (m, lang, code) =>
+            `<div class="code-block">
+                <div class="code-header">
+                    <span>${lang || 'code'}</span>
+                    <div class="code-actions">
+                        <button class="code-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <button class="code-btn" onclick="downloadCode(this)">Download</button>
                     </div>
-                    <pre><code>${escapeHtml(code.trim())}</code></pre>
                 </div>
-            `;
-        });
-        
-        // Format inline code
+                <pre><code>${escapeHtml(code.trim())}</code></pre>
+            </div>`
+        );
+        // Inline code
         text = text.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-        
-        // Format newlines
-        text = text.replace(/\n/g, '<br>');
-        
-        return text;
+        // Newlines
+        return text.replace(/\n/g, '<br>');
     }
     
     function escapeHtml(unsafe) {
@@ -173,30 +169,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function loadAvailableModels() {
         fetch('/api/models')
-            .then(response => response.json())
-            .then(availableModels => {
+            .then(r => r.json())
+            .then(models => {
                 modelSelector.innerHTML = '';
-                
-                Object.entries(availableModels).forEach(([value, label]) => {
+                Object.entries(models).forEach(([value, label]) => {
                     const option = document.createElement('option');
                     option.value = value;
                     option.textContent = label;
                     modelSelector.appendChild(option);
                 });
-                
-                // Select current model
-                fetch('/api/stats')
-                    .then(response => response.json())
-                    .then(stats => {
-                        modelSelector.value = stats.current_model;
-                    });
+                return fetch('/api/stats');
             })
-            .catch(error => {
-                console.error('Error loading models:', error);
-                modelSelector.innerHTML = '';
-                const option = document.createElement('option');
-                option.text = 'Error loading models';
-                modelSelector.appendChild(option);
+            .then(r => r.json())
+            .then(stats => {
+                modelSelector.value = stats.current_model;
+            })
+            .catch(() => {
+                modelSelector.innerHTML = '<option>Error loading models</option>';
             });
     }
     
@@ -239,13 +228,15 @@ document.addEventListener('DOMContentLoaded', function() {
         statsContainer.innerHTML = statsHTML;
     }
     
+    // Debounce stats polling
+    let statsInterval;
     function startStatsUpdates() {
-        setInterval(() => {
+        if (statsInterval) clearInterval(statsInterval);
+        statsInterval = setInterval(() => {
             if (socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ type: "get_stats" }));
             }
         }, 5000);
-        
         if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ type: "get_stats" }));
         }
@@ -267,6 +258,15 @@ function copyToClipboard(button) {
 function downloadCode(button) {
     const codeBlock = button.closest('.code-block');
     const code = codeBlock.querySelector('code').textContent;
+    const lang = codeBlock.querySelector('.code-header span').textContent;
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code.${lang || 'txt'}`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
     const lang = codeBlock.querySelector('.code-header span').textContent;
     const blob = new Blob([code], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);

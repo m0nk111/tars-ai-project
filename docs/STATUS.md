@@ -1,18 +1,47 @@
-# TARS AI Project Status - Live
+# TARS AI Project Status
 
-## 🟢 Operationeel - 31 Augustus 2025
+## 🟢 Operational - 31 August 2025
 
-### ✅ Werkende Componenten
-- **Backend Service**: FastAPI op poort 8002
-- **Frontend Interface**: HTML/JS op poort 80 via Nginx
-- **Nginx Reverse Proxy**: Correct geconfigureerd
-- **Systemd Services**: Beheer via systemctl
+### ✅ Hardware Status
+- CPU: Intel Xeon E5-2697A v4 (16c/32t)
+- RAM: 128 GB DDR4 ECC
+- GPU: NVIDIA RTX 3060 (12 GB, passthrough working)
+- Storage: 1 TB NVMe SSD
 
-### 🌐 Netwerk Configuratie
-- **Server IP**: 192.168.1.26
-- **Backend Port**: 8002
-- **Frontend Port**: 80 (Nginx)
-- **API Endpoints**: /api/, /health
+### ✅ Software Status
+- Host OS: Ubuntu 24.04
+- Guest OS: Ubuntu 24.04
+- Python: 3.12
+- CUDA: 12.9
+- PyTorch: 2.8.0 + CUDA
+
+### ✅ Components Working
+- KVM Virtualization
+- GPU Passthrough
+- NVIDIA Drivers
+- CUDA Toolkit
+- Python Virtual Environment
+- FastAPI Web Interface
+- Dark Mode UI
+
+### 🟡 In Progress
+- AI Model Integration (DeepSeek/Llama)
+- ChromaDB Persistent Memory
+- TTS/Voice Features
+- File Upload System
+- Systemd Services
+
+### 🔴 Pending
+- SSL Certificates
+- Nginx Reverse Proxy
+- Multi-language Support (Dutch UI required)
+- Flappy Bird Game in header
+
+### 🌐 Network Configuration
+- Server IP: 192.168.1.26
+- Backend Port: 8002
+- Frontend Port: 80 (Nginx)
+- API Endpoints: /api/, /health
 
 ### 🔧 Service Commands
 ```bash
@@ -39,7 +68,7 @@ curl http://localhost:8002/health
 curl http://192.168.1.26/api/health
 ```
 
-### 🚀 Snelstart
+### 🚀 Quickstart
 ```bash
 # Volledige status check
 curl -s http://192.168.1.26/health | python3 -m json.tool

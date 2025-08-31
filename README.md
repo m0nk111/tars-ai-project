@@ -1,24 +1,31 @@
 # TARS AI Assistant Project
+
 ![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)
 
-A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
+A self-hosted AI chat assistant inspired by Interstellar's TARS. Features include dark mode, file upload, persistent memory (SQLite/ChromaDB), model selection, and real-time system monitoring.
+
+---
 
 ## 🚀 Features
-\n## 🗃️ Persistent Memory with SQLite
 
-The project now uses SQLite for persistent conversation storage instead of in-memory storage.
-
-### Features:
-- Conversations persist between application restarts
-- SQLite database stored in conversation_memory.db
+- Persistent conversation memory (SQLite)
 - Automatic database initialization
-- Efficient storage and retrieval of chat history
+- Efficient chat history retrieval
+- Dark mode interface
+- File upload (drag & drop)
+- Multiple model selection with persistence
+- Code formatting (copy/download)
+- Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
+- WebSocket-based chat
+- Upcoming: ChromaDB, TTS, voice input
 
-### Database Structure:
+## 🗃️ Database Structure
+
 ```sql
+-- SQLite schema
 CREATE TABLE conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id TEXT NOT NULL,
@@ -28,91 +35,78 @@ CREATE TABLE conversations (
 );
 ```
 
-### API Endpoints:
-- GET /api/conversations - Retrieve conversation history
-- All chat messages are automatically stored in SQLite
-- **Dark mode interface** similar to chat.deepseek.com
-- **File upload and parsing capabilities** with drag & drop support
-- **Persistent conversation memory** with ChromaDB (upcoming)
-- **Multiple model selection** with persistence
-- **Text-to-speech functionality** (upcoming)
-- **Voice input support** (upcoming)
-- **Real-time system monitoring** (CPU, RAM, GPU, VRAM, temperatures)
-- **Code formatting** with copy and download buttons
-- **Model persistence** remembers last used model between sessions
-- **WebSocket-based real-time chat**
-
 ## 🛠️ Installation
-```bash
-# Volledige installatie
-sudo ./scripts/install.sh --all
-# Alle services status
-sudo systemctl status tars-backend tars-frontend nginx
-# Logs bekijken
-sudo journalctl -u tars-backend -f --no-pager
-sudo journalctl -u tars-frontend -f --no-pager
-sudo tail -f /var/log/nginx/tars-access.log
 
+```bash
 # Clone the repository
 git clone https://github.com/m0nk111/tars-ai-project.git
 cd tars-ai-project
 
 # Run installation script
 sudo bash install/main-install.sh
+
+# Check service status
+sudo systemctl status tars-backend tars-frontend nginx
+
+# View logs
+sudo journalctl -u tars-backend -f --no-pager
+sudo journalctl -u tars-frontend -f --no-pager
+sudo tail -f /var/log/nginx/tars-access.log
 ```
 
 ## ✅ Current Status
-- ✅ Ubuntu 24.04 KVM Guest
-- ✅ NVIDIA RTX 3060 GPU Passthrough
-- ✅ CUDA 12.9 + PyTorch 2.8.0
-- ✅ Python 3.12 Virtual Environment
-- ✅ FastAPI Web Interface with WebSockets
-- ✅ Dark Mode UI with modern styling
-- ✅ Ollama AI Integration
-- ✅ Real-time System Monitoring
-- ✅ Model Switching with Persistence
-- ✅ File Upload with Drag & Drop
-- ✅ Code Formatting with Copy/Download
-- 🔄 ChromaDB Persistent Memory (Next)
-- 🔄 TTS/Voice Features (Next)
+
+- Ubuntu 24.04 KVM Guest
+- NVIDIA RTX 3060 GPU Passthrough
+- CUDA 12.9 + PyTorch 2.8.0
+- Python 3.12 Virtual Environment
+- FastAPI Web Interface
+- Ollama AI Integration
+- Model Switching
+- File Upload
+- Code Formatting
+- ChromaDB, TTS/Voice (Next)
 
 ## 📁 Project Structure
-```
+
+```text
 tars-ai-project/
-├── 📁 scripts/           # Utility scripts and model management
-├── 📁 generated/        # Generated data (not in git)
-│   ├── 📁 models/       # AI models
-│   ├── 📁 chromadb/     # Vector database (future)
-│   └── 📁 uploads/      # Uploaded files
-├── 📁 web-ui/           # Web interface
-│   ├── 📁 static/       # CSS, JS, assets
-│   ├── 📁 templates/    # HTML templates
-│   ├── 📁 uploads/      # User uploaded files
-│   └── main.py          # FastAPI application
-├── 📁 install/          # Installation scripts
-├── 📁 docs/            # Documentation
-├── 📁 services/        # Systemd service files
-├── venv/               # Python virtual environment
-├── requirements.txt    # Python dependencies
+├── scripts/           # Utility scripts and model management
+├── generated/         # Generated data (not in git)
+│   ├── models/        # AI models
+│   ├── chromadb/      # Vector database (future)
+│   └── uploads/       # Uploaded files
+├── web-ui/            # Web interface
+│   ├── static/        # CSS, JS, assets
+│   ├── templates/     # HTML templates
+│   ├── uploads/       # User uploaded files
+│   └── main.py        # FastAPI application
+├── install/           # Installation scripts
+├── docs/              # Documentation
+├── services/          # Systemd service files
+├── venv/              # Python virtual environment
+├── requirements.txt   # Python dependencies
 └── README.md          # This file
 ```
 
 ## 🔧 Hardware Requirements
+
 - **CPU**: Intel Xeon E5-2697A v4 (16 cores / 32 threads)
 - **RAM**: 128 GB DDR4 ECC
-- **GPU**: NVIDIA RTX 3060 (12 GB GDDR6) with PCI-passthrough
+- **GPU**: NVIDIA RTX 3060 (12 GB GDDR6)
 - **Storage**: 1 TB NVMe SSD
-- **Network**: Static IP configuration
 
 ## 🌐 Language Policy
-- All code and documentation must be written in English
-- This ensures international collaboration and maintainability
-- Only user interface elements may be localized for different languages
+
+- All code and documentation in English
+- UI elements may be localized
 
 ## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+MIT License - see [LICENSE](LICENSE).
 
 ## 🤝 Contributing
+
 1. Fork the project
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
@@ -120,14 +114,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 5. Open a Pull Request
 
 ## 📞 Support
-For support and questions, please open an issue in the GitHub repository.
+
+Open an issue in the GitHub repository for support/questions.
 
 ## 🔄 Changelog
 
-## 🤖 AI Models
-For detailed information about recommended AI models, see [AI_MODELS.md](docs/AI_MODELS.md)
-See [docs/CHANGELOG.md](docs/CHANGELOG.md) for recent updates and features.
+See [docs/CHANGELOG.md](docs/CHANGELOG.md) for updates.
 
+## 🤖 AI Models
+
+See [docs/AI_MODELS.md](docs/AI_MODELS.md) for recommended models.
+
+---
+
+**Note:** This project is under active development. Features and documentation may change.
 # TARS AI Assistant Project
 
 ![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)

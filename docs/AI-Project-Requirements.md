@@ -1,95 +1,95 @@
 # AI Project Requirements (TARS Assistant)
 
-## Project Overview
-Create a self-hosted AI chat assistant similar to chat.deepseek.com with a dark mode interface, file upload capabilities, and persistent memory using ChromaDB. The system should run on an Ubuntu 24.04.3 server with full shell access for the AI assistant.
+## Overview
 
-## Technical Specifications
+Build a self-hosted AI chat assistant with a dark mode interface, file upload, persistent memory (ChromaDB), and model selection. Runs on Ubuntu 24.04.3 with full shell access.
 
-### Server Hardware
-- **CPU**: Intel Xeon E5-2697A v4 (16 cores / 32 threads)
-- **RAM**: 128 GB DDR4 ECC
-- **GPU**: NVIDIA RTX 3060 (12 GB GDDR6)
-- **Motherboard**: MACHINIST X99 PR9 (PCIe bifurcation capable)
-- **Storage**: 1 TB NVMe SSD
-- **PSU**: Corsair CX600M 600W
+## Hardware
 
-### Network Configuration
-- **Host Server IP**: 192.168.1.25
-- **Guest Server IP**: 192.168.1.26 (hostname: ai-kvm1)
-- **SSH Username**: flip
-- **SSL/HTTPS**: Required
+- CPU: Intel Xeon E5-2697A v4 (16c/32t)
+- RAM: 128 GB DDR4 ECC
+- GPU: NVIDIA RTX 3060 (12 GB)
+- Storage: 1 TB NVMe SSD
+
+## Network
+
+- Host IP: 192.168.1.25
+- Guest IP: 192.168.1.26 (ai-kvm1)
+- SSH User: flip
+- SSL/HTTPS required
 
 ## Functional Requirements
 
-### Core Features
-- Dark mode interface similar to chat.deepseek.com
-- File upload and parsing capabilities with attachment button
-- Persistent conversation memory using ChromaDB
-- Multiple model selection in interface
-- Text-to-speech functionality for AI responses
-- Voice input for questions
-- Flappy Bird game in header while waiting for responses
-- Image upload and analysis capabilities
+- Dark mode UI (chat.deepseek.com style)
+- File upload (drag & drop)
+- Persistent memory (ChromaDB/SQLite)
+- Model selection
+- Text-to-speech (TTS) for responses
+- Voice input
+- Flappy Bird game in header (while waiting)
+- Image upload/analysis
 
-### Technical Implementation
-- No Docker - direct installation on KVM
-- PCI-passthrough of GPU to KVM-VM
-- NVIDIA CUDA support with driver installation
-- SSL encryption for web interface
-- Root shell access for AI assistant
-- Multi-language support (Dutch required, others optional)
-- Model sharing across multiple KVMs
-- Performance overview showing response times and model feasibility
+## Technical Implementation
 
-### Development Requirements
+- No Docker; direct KVM install
+- PCI-passthrough GPU
+- NVIDIA CUDA support
+- SSL for web interface
+- Root shell access for AI
+- Multi-language UI (Dutch required)
+- Model sharing across KVMs
+- Performance overview
+
+## Development
+
 - No hardcoded variables
-- Advanced debugging code
-- Separate file structure for scripts and generated data
+- Advanced debugging
+- Separate scripts/generated data
 - Complete service implementation
-- GitHub repository with proper documentation
-- Installation script and detailed README.md
-- Change log file tracking progress
-- Maximum use of shell commands for instructions
+- GitHub repo with documentation
+- Installation script, changelog
+- Use shell commands for instructions
 
 ## File Structure
-```
+
+```text
 tars-ai-project/
-├── scripts/          # All development scripts
-├── generated/        # All generated files and data
-├── docs/            # Documentation
-└── README.md        # Main documentation
+├── scripts/          # Development scripts
+├── generated/        # Generated files/data
+├── docs/             # Documentation
+└── README.md         # Main documentation
 ```
 
-## Documentation Requirements
-- Installation instructions with copy-paste friendly shell commands
-- GitHub repository setup guide
-- Progress tracking changelog
-- Hardware compatibility testing procedures
-- Service management instructions
+## Documentation
 
-## Non-Functional Requirements
-- Minimal typing required for setup and operation
-- Maximum use of bash shell commands in documentation
-- Complete sandboxed network environment
-- No unnecessary files in GitHub repository
-- Easy reset capability to start fresh when needed
+- Installation instructions (shell commands)
+- GitHub setup guide
+- Changelog
+- Hardware compatibility
+- Service management
+
+## Non-Functional
+
+- Minimal typing for setup
+- Bash shell commands in docs
+- Sandboxed network
+- No unnecessary files in repo
+- Easy reset capability
 
 ## Assistant Personality
-- Named "TARS" (from Interstellar)
-- Professional but helpful demeanor
+
+- Name: TARS (Interstellar)
+- Professional, helpful
 
 ## Priority
-- Functional Dutch language support required
-- Multi-language support is lower priority
-- Performance and stability over additional features
+
+- Dutch UI required
+- Multi-language optional
+- Performance/stability prioritized
 
 ---
 
-*This document will be updated as the project evolves. Refer to the changelog for progress tracking.*
-
-## Code Language Requirement
-- All code, comments, and documentation must be written in English
-- Variable names, function names, and class names must use English terminology
+All code, comments, and documentation must be in English. UI elements may be localized.
 - Error messages and user-facing text should be in English
 - Only user interface elements may be translated to other languages
 - This ensures international collaboration and maintainability
