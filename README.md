@@ -128,7 +128,6 @@ For support and questions, please open an issue in the GitHub repository.
 For detailed information about recommended AI models, see [AI_MODELS.md](docs/AI_MODELS.md)
 See [CHANGELOG.md](CHANGELOG.md) for recent updates and features.
 
-
 # TARS AI Assistant Project
 
 ![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)
