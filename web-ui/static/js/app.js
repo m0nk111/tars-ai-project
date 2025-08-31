@@ -171,6 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/api/models')
             .then(r => r.json())
             .then(models => {
+                // Verwijder de 'Loading models...' optie als die er nog staat
+                const loadingOption = document.getElementById('loading-models');
+                if (loadingOption) {
+                    loadingOption.remove();
+                }
                 modelSelector.innerHTML = '';
                 Object.entries(models).forEach(([value, label]) => {
                     const option = document.createElement('option');
@@ -189,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
+    // Toon direct een melding als er geen modellen zijn
     function switchModel(model) {
         fetch('/api/switch-model', {
             method: 'POST',
@@ -258,21 +264,4 @@ function copyToClipboard(button) {
 function downloadCode(button) {
     const codeBlock = button.closest('.code-block');
     const code = codeBlock.querySelector('code').textContent;
-    const lang = codeBlock.querySelector('.code-header span').textContent;
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `code.${lang || 'txt'}`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-    const lang = codeBlock.querySelector('.code-header span').textContent;
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `code.${lang || 'txt'}`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
+// ...existing code...
