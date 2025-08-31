@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TARS AI Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            color: #00ff88;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .status-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .status-value {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .online {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .offline {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .action-card h3 {
+            color: #00ff88;
+            margin-bottom: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 TARS AI Assistant</h1>
+            <p>Interstellar-inspired AI Chat Assistant</p>
+        </header>
+        
+        <div class="status-panel">
+            <h2>Systeem Status</h2>
+            <div class="status-item">
+                <span class="status-label">Backend Service:</span>
+                <span id="backend-status" class="status-value">Checking...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Frontend Service:</span>
+                <span id="frontend-status" class="status-value online">Online</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Nginx Proxy:</span>
+                <span id="nginx-status" class="status-value">Checking...</span>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <div class="action-card" onclick="window.open('/health', '_blank')">
+                <h3>🔧 API Health</h3>
+                <p>Check backend status</p>
+            </div>
+            <div class="action-card" onclick="window.open('/api/chat', '_blank')">
+                <h3>💬 Chat Test</h3>
+                <p>Test chat endpoint</p>
+            </div>
+            <div class="action-card" onclick="window.open('http://localhost:8002', '_blank')">
+                <h3>📊 Direct Backend</h3>
+                <p>Access backend directly</p>
+            </div>
+            <div class="action-card" onclick="window.open('/static/', '_blank')">
+                <h3>📁 Static Files</h3>
+                <p>View static assets</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>TARS AI Project - Running on Ubuntu 24.04 | GPU Accelerated</p>
+        </footer>
+    </div>
+
+    <script>
+        // Check backend status
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('backend-status').className = 'status-value online';
+                    document.getElementById('backend-status').textContent = 'Online - ' + data.status;
+                } else {
+                    throw new Error('Backend not responding');
+                }
+            } catch (error) {
+                document.getElementById('backend-status').className = 'status-value offline';
+                document.getElementById('backend-status').textContent = 'Offline';
+            }
+        }
+        
+        // Check nginx status
+        async function checkNginxStatus() {
+            try {
+                const response = await fetch('/health');
+                document.getElementById('nginx-status').className = 'status-value online';
+                document.getElementById('nginx-status').textContent = 'Online';
+            } catch (error) {
+                document.getElementById('nginx-status').className = 'status-value offline';
+                document.getElementById('nginx-status').textContent = 'Offline';
+            }
+        }
+        
+        // Initial checks
+        checkBackendStatus();
+        checkNginxStatus();
+        
+        // Refresh status every 30 seconds
+        setInterval(() => {
+            checkBackendStatus();
+            checkNginxStatus();
+        }, 30000);
+    </script>
+</body>
+</html>
