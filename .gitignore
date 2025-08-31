@@ -248,3 +248,4 @@ Thumbs.db
 *.bin
 main
 conversation_memory.db
+generated/
