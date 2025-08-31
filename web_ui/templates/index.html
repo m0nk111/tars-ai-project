@@ -14,32 +14,29 @@
             <div class="sidebar-header">
                 <img src="/static/favicon.ico" alt="TARS" class="avatar">
                 <span class="app-title">TARS AI</span>
-            <div id="theme-switcher" style="margin-top:10px;">
-                <label for="theme-select" style="color:var(--text-secondary);font-size:0.95em;">Theme:</label>
-                <select id="theme-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;">
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                </select>
+                <div id="active-model-sidebar" style="margin-bottom:12px;color:var(--accent-color);font-weight:bold;font-size:1.05em;">Model: <span id="active-model-sidebar-value">...</span></div>
+                <div id="theme-switcher" style="margin-top:10px;">
+                    <div id="voice-switcher" style="margin-top:10px;">
+                        <label for="voice-select" style="color:var(--text-secondary);font-size:0.95em;">Voice:</label>
+                        <select id="voice-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;"></select>
+                    </div>
+                    <label for="theme-select" style="color:var(--text-secondary);font-size:0.95em;">Theme:</label>
+                    <select id="theme-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                    </select>
+                </div>
+                <nav class="sidebar-nav" style="margin-top:24px;">
+                    <button class="nav-btn active"><i class="fas fa-comments"></i> Chat</button>
+                    <button class="nav-btn"><i class="fas fa-cog"></i> Settings</button>
+                </nav>
             </div>
-            </div>
-            <nav class="sidebar-nav">
-                <button class="nav-btn active"><i class="fas fa-comments"></i> Chat</button>
-                <button class="nav-btn"><i class="fas fa-cog"></i> Settings</button>
-            <div id="theme-switcher" style="display:none; margin-top:10px;">
-                <label for="theme-select" style="color:var(--text-secondary);font-size:0.95em;">Theme:</label>
-                <select id="theme-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;">
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                </select>
-            </div>
-            </nav>
-            <div class="sidebar-footer">
-                <!-- Removed user icon and 'You' text from sidebar footer -->
-            </div>
+            <div id="system-stats" class="system-stats" style="position:absolute;left:24px;bottom:24px;max-width:220px;font-size:0.95em;"></div>
         </aside>
         <section class="chat-section">
             <header class="chat-header">
                 <h1>TARS AI Assistant</h1>
+                <div id="active-model-header" style="margin-right:18px;color:var(--accent-color);font-weight:bold;font-size:1.08em;">Model: <span id="active-model-header-value">...</span></div>
                 <select id="model-selector" class="model-selector"></select>
                 <!-- Removed system-stats box -->
             </header>

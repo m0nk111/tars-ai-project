@@ -1,5 +1,33 @@
 // TARS AI Assistant - Enhanced with file upload, code formatting, and model persistence
 document.addEventListener('DOMContentLoaded', () => {
+    // TTS voice selector logic
+    const voiceSelect = document.getElementById('voice-select');
+    let availableVoices = [];
+    function populateVoiceList() {
+        if (!voiceSelect) return;
+        availableVoices = window.speechSynthesis.getVoices();
+        voiceSelect.innerHTML = '';
+        availableVoices.forEach((voice, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = `${voice.name} (${voice.lang})${voice.gender ? ' - ' + voice.gender : ''}`;
+            voiceSelect.appendChild(option);
+        });
+        // Restore last selected voice
+        const savedVoice = localStorage.getItem('ttsVoice');
+        if (savedVoice && voiceSelect.options[savedVoice]) {
+            voiceSelect.value = savedVoice;
+        }
+    }
+    if (typeof speechSynthesis !== 'undefined') {
+        populateVoiceList();
+        window.speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+    if (voiceSelect) {
+        voiceSelect.addEventListener('change', (e) => {
+            localStorage.setItem('ttsVoice', e.target.value);
+        });
+    }
     // Theme switcher dropdown logic
     const settingsBtn = document.querySelector('.nav-btn:nth-child(2)');
     const themeSwitcher = document.getElementById('theme-switcher');
@@ -11,27 +39,32 @@ document.addEventListener('DOMContentLoaded', () => {
             setTheme(e.target.value);
         });
     }
-    // Theme toggle logic
+    // Theme toggle logic (fix for missing themeToggle element)
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+    }
 
     function setTheme(theme) {
         if (theme === 'light') {
             document.body.classList.add('light-theme');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
+            if (themeIcon) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
         } else {
             document.body.classList.remove('light-theme');
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
+            if (themeIcon) {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
         }
         localStorage.setItem('theme', theme);
     }
-
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
-        setTheme(currentTheme === 'light' ? 'dark' : 'light');
-    });
 
     // On load, set theme from localStorage or default to dark
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -83,6 +116,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateSystemStats(data.data);
             } else if (data.type === 'response') {
                 addMessage('TARS', data.message, 'response', data.model);
+                // TTS: Speak response with selected voice
+                if ('speechSynthesis' in window) {
+                    const utter = new SpeechSynthesisUtterance(data.message);
+                    const voices = window.speechSynthesis.getVoices();
+                    let selectedVoiceIdx = localStorage.getItem('ttsVoice');
+                    if (selectedVoiceIdx && voices[selectedVoiceIdx]) {
+                        utter.voice = voices[selectedVoiceIdx];
+                    } else {
+                        utter.voice = voices[0];
+                    }
+                    utter.rate = 1.0;
+                    utter.pitch = 1.1;
+                    window.speechSynthesis.speak(utter);
+                }
                 hideThinking();
                 waitingForResponse = false;
                 setInputBlocked(false);
@@ -169,8 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
         sendButton.disabled = blocked;
         if (blocked) {
             sendButton.classList.add('disabled');
+            messageInput.placeholder = 'Selecteer eerst een model.';
         } else {
             sendButton.classList.remove('disabled');
+            messageInput.placeholder = 'Type your message...';
         }
     }
     function sendMessage() {
@@ -235,35 +284,55 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, "&#039;");
     }
     
+    // Model selector loading fix
+    function showModelLoading() {
+        modelSelector.innerHTML = '<option id="loading-models">Loading models...</option>';
+        updateActiveModelIndicators('...');
+    }
+    showModelLoading();
     function loadAvailableModels() {
+        showModelLoading();
         fetch('/api/models')
             .then(r => r.json())
             .then(models => {
-                // Verwijder de 'Loading models...' optie als die er nog staat
-                const loadingOption = document.getElementById('loading-models');
-                if (loadingOption) {
-                    loadingOption.remove();
-                }
                 modelSelector.innerHTML = '';
+                let found = false;
                 Object.entries(models).forEach(([value, label]) => {
                     const option = document.createElement('option');
                     option.value = value;
                     option.textContent = label;
                     modelSelector.appendChild(option);
+                    found = true;
                 });
+                if (!found) {
+                    modelSelector.innerHTML = '<option>No models found</option>';
+                    updateActiveModelIndicators('None');
+                    setInputBlocked(true);
+                    addMessage('System', 'Geen modellen beschikbaar. Backend werkt niet of is leeg.', 'error');
+                    return;
+                }
+                setInputBlocked(false);
                 return fetch('/api/stats');
             })
-            .then(r => r.json())
+            .then(r => r ? r.json() : null)
             .then(stats => {
-                modelSelector.value = stats.current_model;
+                if (stats && stats.current_model) {
+                    modelSelector.value = stats.current_model;
+                    updateActiveModelIndicators(stats.current_model);
+                    setInputBlocked(false);
+                } else {
+                    setInputBlocked(true);
+                }
             })
             .catch(() => {
                 modelSelector.innerHTML = '<option>Error loading models</option>';
+                updateActiveModelIndicators('Error');
+                setInputBlocked(true);
+                addMessage('System', 'Fout bij het laden van modellen.', 'error');
             });
     }
-    
-    // Toon direct een melding als er geen modellen zijn
     function switchModel(model) {
+        updateActiveModelIndicators('...');
         fetch('/api/switch-model', {
             method: 'POST',
             headers: {
@@ -275,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.status === 'success') {
                 addMessage('System', `Model switched to: ${model}`, 'system');
+                loadAvailableModels();
             } else {
                 addMessage('System', `Error: ${data.message}`, 'error');
                 loadAvailableModels();
@@ -286,6 +356,16 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAvailableModels();
         });
     }
+    
+    function updateActiveModelIndicators(modelName) {
+        const headerValue = document.getElementById('active-model-header-value');
+        const sidebarValue = document.getElementById('active-model-sidebar-value');
+        if (headerValue) headerValue.textContent = modelName;
+        if (sidebarValue) sidebarValue.textContent = modelName;
+    }
+    
+    // Always load models on page open
+    loadAvailableModels();
     
     function updateSystemStats(stats) {
         let statsHTML = '<strong>System Resources:</strong><br>';
