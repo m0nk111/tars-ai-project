@@ -1,6 +1,41 @@
 // TARS AI Assistant - Enhanced with file upload, code formatting, and model persistence
-
 document.addEventListener('DOMContentLoaded', () => {
+    // Theme switcher dropdown logic
+    const settingsBtn = document.querySelector('.nav-btn:nth-child(2)');
+    const themeSwitcher = document.getElementById('theme-switcher');
+    const themeSelect = document.getElementById('theme-select');
+
+    if (themeSelect) {
+        themeSelect.value = localStorage.getItem('theme') || 'dark';
+        themeSelect.addEventListener('change', (e) => {
+            setTheme(e.target.value);
+        });
+    }
+    // Theme toggle logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setTheme(theme) {
+        if (theme === 'light') {
+            document.body.classList.add('light-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            document.body.classList.remove('light-theme');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+        localStorage.setItem('theme', theme);
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+
+    // On load, set theme from localStorage or default to dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
     // Cache DOM elements once
     const $ = id => document.getElementById(id);
     const messageInput = $('message-input');
@@ -44,12 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle incoming messages from WebSocket
     socket.addEventListener('message', function(event) {
         const data = JSON.parse(event.data);
-        
-        if (data.type === 'system_stats') {
-            updateSystemStats(data.data);
-        } else if (data.type === 'response') {
-            addMessage('TARS', data.message, 'response', data.model);
-            hideThinking();
+            if (data.type === 'system_stats') {
+                updateSystemStats(data.data);
+            } else if (data.type === 'response') {
+                addMessage('TARS', data.message, 'response', data.model);
+                hideThinking();
+                waitingForResponse = false;
+                setInputBlocked(false);
         }
     });
     
@@ -66,26 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Drag and drop functionality
-    fileDropZone.addEventListener('click', () => fileUpload.click());
-    
-    fileDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        fileDropZone.classList.add('dragover');
-    });
-    
-    fileDropZone.addEventListener('dragleave', () => {
-        fileDropZone.classList.remove('dragover');
-    });
-    
-    fileDropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        fileDropZone.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files);
-    });
-    
-    fileUpload.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-    });
+    const fileUploadBtn = $('file-upload-btn');
+    if (fileUploadBtn) {
+        fileUploadBtn.addEventListener('click', () => fileUpload.click());
+    }
+    if (fileUpload) {
+        fileUpload.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+    }
     
     // Send message when send button is clicked
     sendButton.addEventListener('click', sendMessage);
@@ -138,14 +163,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    let waitingForResponse = false;
+    function setInputBlocked(blocked) {
+        messageInput.disabled = blocked;
+        sendButton.disabled = blocked;
+        if (blocked) {
+            sendButton.classList.add('disabled');
+        } else {
+            sendButton.classList.remove('disabled');
+        }
+    }
     function sendMessage() {
+        if (waitingForResponse) return;
         const message = messageInput.value.trim();
-            if (message && socket.readyState === WebSocket.OPEN) {
-                addMessage('You', message, 'user');
-                showThinking();
-                socket.send(JSON.stringify({ message: message }));
-                messageInput.value = '';
-            }
+        if (message && socket.readyState === WebSocket.OPEN) {
+            addMessage('You', message, 'user');
+            showThinking();
+            socket.send(JSON.stringify({ message: message }));
+            messageInput.value = '';
+            waitingForResponse = true;
+            setInputBlocked(true);
+        }
     }
     
     function addMessage(sender, text, type, model = null) {
@@ -294,5 +332,15 @@ function copyToClipboard(button) {
 function downloadCode(button) {
     const codeBlock = button.closest('.code-block');
     const code = codeBlock.querySelector('code').textContent;
-// ...existing code...
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'code.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
 }

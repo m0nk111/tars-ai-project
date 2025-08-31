@@ -3,58 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TARS AI Assistant</title>
+    <title>TARS AI Chat</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>TARS AI Assistant</h1>
-            <div class="header-controls">
-                <select id="model-selector" class="model-selector">
-                        <option value="" id="loading-models">Loading models...</option>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/static/favicon.ico" alt="TARS" class="avatar">
+                <span class="app-title">TARS AI</span>
+            <div id="theme-switcher" style="margin-top:10px;">
+                <label for="theme-select" style="color:var(--text-secondary);font-size:0.95em;">Theme:</label>
+                <select id="theme-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
                 </select>
             </div>
-        </header>
-        <main>
-            <div class="chat-container">
-                <div class="messages" id="messages"></div>
-                <div class="input-area">
-                    <div class="file-drop-zone" id="file-drop-zone">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Drop files here or click to upload</p>
-                        <input type="file" id="file-upload" multiple style="display:none;">
-                    </div>
-                    <div class="input-controls">
-                        <input type="text" id="message-input" placeholder="Ask TARS something...">
-                        <button id="send-button" class="send-btn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
             </div>
-        </main>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active"><i class="fas fa-comments"></i> Chat</button>
+                <button class="nav-btn"><i class="fas fa-cog"></i> Settings</button>
+            <div id="theme-switcher" style="display:none; margin-top:10px;">
+                <label for="theme-select" style="color:var(--text-secondary);font-size:0.95em;">Theme:</label>
+                <select id="theme-select" style="background:var(--bg-tertiary);color:var(--text-primary);border-radius:6px;padding:4px 10px;border:1px solid var(--border-color);margin-left:8px;">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                </select>
+            </div>
+            </nav>
+            <div class="sidebar-footer">
+                <!-- Removed user icon and 'You' text from sidebar footer -->
+            </div>
+        </aside>
+        <section class="chat-section">
+            <header class="chat-header">
+                <h1>TARS AI Assistant</h1>
+                <select id="model-selector" class="model-selector"></select>
+                <!-- Removed system-stats box -->
+            </header>
+            <div class="chat-history" id="messages"></div>
+            <div class="chat-input-area">
+                <div class="file-upload">
+                    <input type="file" id="file-upload" multiple style="display:none;">
+                    <button id="file-upload-btn"><i class="fas fa-paperclip"></i></button>
+                </div>
+                <input type="text" id="message-input" placeholder="Type your message...">
+                <button id="send-button" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </section>
+        <div id="thinking-indicator" class="thinking-indicator" style="display:none;">
+            <div class="spinner"></div>
+            <span id="thinking-text">TARS is thinking...</span>
+        </div>
     </div>
-    <div id="thinking-indicator" class="thinking-indicator" style="display:none;">
-        <div class="spinner"></div>
-        <span>TARS is thinking...</span>
-    </div>
-    <div id="system-stats" class="system-stats"></div>
     <script src="/static/js/app.js"></script>
-    <script>
-    // Verberg de 'Loading models...' optie zodra modellen geladen zijn
-    document.addEventListener('DOMContentLoaded', function() {
-        const modelSelector = document.getElementById('model-selector');
-        const observer = new MutationObserver(function() {
-            const loadingOption = document.getElementById('loading-models');
-            if (loadingOption && modelSelector.options.length > 1) {
-                modelSelector.removeChild(loadingOption);
-            }
-        });
-        observer.observe(modelSelector, { childList: true });
-    });
-    </script>
 </body>
 </html>
