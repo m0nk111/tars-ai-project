@@ -59,3 +59,16 @@
 - FastAPI endpoints for file management
 - JavaScript improvements for real-time updates
 - Python path configuration fixes
+
+## [0.9.0] - 2025-08-31 (Live)
+### ✅ Operationeel
+- **Backend Service**: FastAPI op poort 8002
+- **Nginx Config**: Reverse proxy met correcte routing
+- **Frontend Fix**: 403 Forbidden opgelost
+- **API Endpoints**: /health en /api/health werkend
+- **Systemd Integration**: Volledige service management
+
+### 🌐 Netwerk
+- **Server**: 192.168.1.26
+- **Ports**: 8002 (backend), 80 (frontend)
+- **URLs**: http://192.168.1.26/health

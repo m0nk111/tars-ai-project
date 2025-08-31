@@ -259,3 +259,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 For support and questions, please open an issue in the GitHub repository.
+
+## ✅ Huidige Status (Augustus 2025)
+- **Backend API**: Draait op poort 8002
+- **Frontend Interface**: Bereikbaar op http://192.168.1.26
+- **Nginx Config**: Reverse proxy operationeel
+- **Services**: Systemd services actief
+
+## 🌐 Werkende URLs
+- Frontend: http://192.168.1.26
+- API Health: http://192.168.1.26/api/health
+- Direct Health: http://192.168.1.26/health
+- Backend Direct: http://localhost:8002/health
