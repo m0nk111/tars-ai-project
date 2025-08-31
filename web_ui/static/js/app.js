@@ -22,6 +22,24 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAvailableModels();
         startStatsUpdates();
     });
+        const thinkingIndicator = document.getElementById('thinking-indicator');
+
+        function showThinking() {
+            if (thinkingIndicator) {
+                thinkingIndicator.style.display = 'flex';
+                thinkingIndicator.style.visibility = 'visible';
+                const text = thinkingIndicator.querySelector('span');
+                if (text) text.textContent = 'TARS is thinking...';
+            }
+        }
+        function hideThinking() {
+            if (thinkingIndicator) {
+                thinkingIndicator.style.display = 'none';
+                thinkingIndicator.style.visibility = 'hidden';
+                const text = thinkingIndicator.querySelector('span');
+                if (text) text.textContent = '';
+            }
+        }
     
     // Handle incoming messages from WebSocket
     socket.addEventListener('message', function(event) {
@@ -31,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSystemStats(data.data);
         } else if (data.type === 'response') {
             addMessage('TARS', data.message, 'response', data.model);
+            hideThinking();
         }
     });
     
@@ -70,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Send message when send button is clicked
     sendButton.addEventListener('click', sendMessage);
-    
+
     // Send message when Enter key is pressed
     messageInput.addEventListener('keypress', function(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -78,6 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
             sendMessage();
         }
     });
+
+    // Add loading indicator
+    // Use floating spinner window for thinking animation
+
+    function showThinking() {
+        if (thinkingIndicator) thinkingIndicator.style.display = 'flex';
+    }
+    function hideThinking() {
+        if (thinkingIndicator) thinkingIndicator.style.display = 'none';
+    }
     
     // Handle model selection change
     modelSelector.addEventListener('change', function() {
@@ -111,11 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function sendMessage() {
         const message = messageInput.value.trim();
-        if (message && socket.readyState === WebSocket.OPEN) {
-            addMessage('You', message, 'user');
-            socket.send(JSON.stringify({ message: message }));
-            messageInput.value = '';
-        }
+            if (message && socket.readyState === WebSocket.OPEN) {
+                addMessage('You', message, 'user');
+                showThinking();
+                socket.send(JSON.stringify({ message: message }));
+                messageInput.value = '';
+            }
     }
     
     function addMessage(sender, text, type, model = null) {

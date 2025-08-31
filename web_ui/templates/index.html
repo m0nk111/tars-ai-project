@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <header class="main-header">
+        <header>
             <h1>TARS AI Assistant</h1>
             <div class="header-controls">
                 <select id="model-selector" class="model-selector">
@@ -19,25 +19,19 @@
             </div>
         </header>
         <main>
-            <div class="windows">
-                <div class="window chat-window">
-                    <div class="window-header">Chat</div>
-                    <div class="messages" id="messages"></div>
-                </div>
-                <div class="window input-window">
-                    <div class="window-header">Input</div>
-                    <div class="input-area">
-                        <div class="file-drop-zone" id="file-drop-zone">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Drop files here or click to upload</p>
-                            <input type="file" id="file-upload" multiple style="display:none;">
-                        </div>
-                        <div class="input-controls">
-                            <input type="text" id="message-input" placeholder="Ask TARS something...">
-                            <button id="send-button" class="send-btn">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
+            <div class="chat-container">
+                <div class="messages" id="messages"></div>
+                <div class="input-area">
+                    <div class="file-drop-zone" id="file-drop-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drop files here or click to upload</p>
+                        <input type="file" id="file-upload" multiple style="display:none;">
+                    </div>
+                    <div class="input-controls">
+                        <input type="text" id="message-input" placeholder="Ask TARS something...">
+                        <button id="send-button" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>

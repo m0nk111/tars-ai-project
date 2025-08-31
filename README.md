@@ -21,6 +21,20 @@ A self-hosted AI chat assistant inspired by Interstellar's TARS. Features includ
 - Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
 - WebSocket-based chat
 - Upcoming: ChromaDB, TTS, voice input
+* Persistent conversation memory (SQLite)
+* Automatic database initialization
+* Efficient chat history retrieval
+* Dark mode interface
+* File upload (drag & drop)
+* Multiple model selection with persistence
+* Code formatting (copy/download)
+* Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
+* WebSocket-based chat
+* Modern chat window layout with clear header and input areas
+* Spinner animation and "TARS is thinking..." indicator during AI response
+* Persistent chat history in browser (localStorage)
+* Always-visible chat scroll bar for long conversations
+* Upcoming: ChromaDB, TTS, voice input
 
 ## 🗃️ Database Structure
 

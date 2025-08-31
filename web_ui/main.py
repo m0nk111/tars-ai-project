@@ -19,6 +19,10 @@ import time
 import os
 from scripts.model_manager import get_last_used_model, save_last_used_model
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("tars-ai-debug")
+
 app = FastAPI(title="TARS AI Assistant", version="1.0.0")
 
 # Get absolute paths
@@ -34,6 +38,44 @@ current_model = get_last_used_model()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+import requests
+import subprocess
+
+def get_ai_response(message, model="deepseek-r1:70b"):
+    url = "http://localhost:11434/api/generate"
+    payload = {
+        "model": model,
+        "prompt": message,
+        "stream": False
+    }
+    try:
+        logger.info(f"Ollama request: model={model}, prompt={message}")
+        response = requests.post(url, json=payload, timeout=60)
+        response.raise_for_status()
+        data = response.json()
+        logger.info(f"Ollama raw response: {data}")
+        ai_response = data.get("response")
+        if ai_response:
+            logger.info(f"Ollama response: {ai_response}")
+            return ai_response
+        error_msg = data.get("error", "Geen antwoord van Ollama.")
+        logger.error(f"Ollama error: {error_msg}")
+        subprocess.run([
+            'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', f"Ollama error: {error_msg}"
+        ], check=False)
+        # Fallback naar ander model
+        if model != "deepseek-coder:6.7b":
+            return get_ai_response(message, model="deepseek-coder:6.7b")
+        return error_msg
+    except Exception as e:
+        logger.error(f"Ollama exception: {e}")
+        subprocess.run([
+            'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', f"Ollama exception: {e}"
+        ], check=False)
+        # Fallback naar ander model
+        if model != "deepseek-coder:6.7b":
+            return get_ai_response(message, model="deepseek-coder:6.7b")
+        return f"Ollama error: {e}"
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 def get_available_models():
@@ -126,8 +168,14 @@ def get_system_stats():
                 'vram_display': f"{gpu_data[1]}MB / {gpu_data[2]}MB",
                 'gpu_temp': f"{gpu_data[3]}°C"
             }
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            gpu_stats = {'gpu_available': False}
+        except subprocess.CalledProcessError as e:
+            error_msg = e.output.decode() if hasattr(e, 'output') and e.output else str(e)
+            if 'Failed to initialize NVML' in error_msg:
+                gpu_stats = {'gpu_available': False, 'gpu_error': 'NVML/driver mismatch: update NVIDIA driver'}
+            else:
+                gpu_stats = {'gpu_available': False, 'gpu_error': error_msg}
+        except FileNotFoundError:
+            gpu_stats = {'gpu_available': False, 'gpu_error': 'nvidia-smi not found'}
         
         # Get memory stats
         memory = psutil.virtual_memory()
@@ -196,6 +244,12 @@ async def switch_model(request: Request):
             }, status_code=400)
             
     except Exception as e:
+        try:
+            subprocess.run([
+                'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', f"Switch model error: {e}"
+            ], check=False)
+        except Exception as notify_err:
+            logger.error(f"Error sending notification: {notify_err}")
         return JSONResponse({
             "status": "error",
             "message": str(e)
@@ -220,6 +274,12 @@ async def upload_file(file: UploadFile = File(...)):
             "file_path": str(file_path)
         })
     except Exception as e:
+        try:
+            subprocess.run([
+                'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', f"Upload error: {e}"
+            ], check=False)
+        except Exception as notify_err:
+            logger.error(f"Error sending notification: {notify_err}")
         return JSONResponse({
             "status": "error",
             "message": f"Upload failed: {str(e)}"
@@ -240,42 +300,57 @@ async def list_files():
                     })
         return JSONResponse({"files": files})
     except Exception as e:
+        try:
+            subprocess.run([
+                'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', f"List files error: {e}"
+            ], check=False)
+        except Exception as notify_err:
+            logger.error(f"Error sending notification: {notify_err}")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """Handle WebSocket connections for real-time chat"""
     await websocket.accept()
+    logger.info(f"WebSocket client connected: {websocket.client}")
     try:
         while True:
-            # Receive message from client
             data = await websocket.receive_text()
+            logger.info(f"Received from client: {data}")
             message_data = json.loads(data)
-            
+
             if message_data.get("type") == "get_stats":
-                # Send system stats
                 stats = get_system_stats()
                 await websocket.send_text(json.dumps({
                     "type": "system_stats",
                     "data": stats
                 }))
+                logger.info("Sent system stats to client.")
             else:
-                # Handle chat message
                 user_message = message_data["message"]
+                logger.info(f"Chat message from client: {user_message}")
+                logger.info(f"Calling get_ai_response with: {user_message}, model={current_model}")
                 save_message("websocket", "user", user_message)
-                ai_response = get_ai_response(user_message)
+                ai_response = get_ai_response(user_message, model=current_model)
+                logger.info(f"AI response: {ai_response}")
                 save_message("websocket", "assistant", ai_response)
-                
-                # Send response back to client
+
                 response_data = {
                     "message": ai_response,
                     "type": "response",
                     "model": current_model
                 }
                 await websocket.send_text(json.dumps(response_data))
-            
+                logger.info(f"Sent response to client: {ai_response}")
+
     except WebSocketDisconnect:
-        print("Client disconnected from WebSocket")
+        logger.info("Client disconnected from WebSocket")
+        try:
+            subprocess.run([
+                'bash', '/home/flip/tars-ai-project/scripts/notify-error.sh', "WebSocket disconnect detected"
+            ], check=False)
+        except Exception as notify_err:
+            logger.error(f"Error sending notification: {notify_err}")
 
 @app.get("/api/conversations")
 async def get_conversations(user_id: str = "default_user", limit: int = 10):
@@ -299,5 +374,7 @@ async def delete_conversation(conversation_id: str):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 if __name__ == "__main__":
+    logger.info("Starting TARS AI backend on 0.0.0.0:8000...")
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
