@@ -116,20 +116,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateSystemStats(data.data);
             } else if (data.type === 'response') {
                 addMessage('TARS', data.message, 'response', data.model);
-                // TTS: Speak response with selected voice
-                if ('speechSynthesis' in window) {
-                    const utter = new SpeechSynthesisUtterance(data.message);
-                    const voices = window.speechSynthesis.getVoices();
-                    let selectedVoiceIdx = localStorage.getItem('ttsVoice');
-                    if (selectedVoiceIdx && voices[selectedVoiceIdx]) {
-                        utter.voice = voices[selectedVoiceIdx];
-                    } else {
-                        utter.voice = voices[0];
-                    }
-                    utter.rate = 1.0;
-                    utter.pitch = 1.1;
-                    window.speechSynthesis.speak(utter);
-                }
+                // TTS: Use Coqui TTS Docker backend
+                fetch('http://localhost:5002/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: data.message })
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const audio = new Audio(url);
+                    audio.play();
+                })
+                .catch(() => {
+                    addMessage('System', 'TTS (Coqui) niet beschikbaar.', 'error');
+                });
                 hideThinking();
                 waitingForResponse = false;
                 setInputBlocked(false);

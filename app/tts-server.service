@@ -1,0 +1,13 @@
+[Unit]
+Description=TARS Coqui TTS Docker Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run --rm -p 5002:5002 --name tars-tts tars-tts:latest
+ExecStop=/usr/bin/docker stop tars-tts
+WorkingDirectory=/home/flip/tars-ai-project/app
+
+[Install]
+WantedBy=multi-user.target

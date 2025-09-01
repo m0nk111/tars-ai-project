@@ -2,12 +2,14 @@
 
 ![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![Ollama](https://img.shields.io/badge/Ollama-Enabled-green)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 
-A self-hosted AI chat assistant inspired by Interstellar's TARS. Features include dark mode, file upload, persistent memory (SQLite/ChromaDB), model selection, and real-time system monitoring.
+A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
+
 
 ---
+
+**Note**: This project is under active development. Features and documentation may change.
 
 ## 🚀 Features
 
@@ -20,21 +22,12 @@ A self-hosted AI chat assistant inspired by Interstellar's TARS. Features includ
 - Code formatting (copy/download)
 - Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
 - WebSocket-based chat
-- Upcoming: ChromaDB, TTS, voice input
-* Persistent conversation memory (SQLite)
-* Automatic database initialization
-* Efficient chat history retrieval
-* Dark mode interface
-* File upload (drag & drop)
-* Multiple model selection with persistence
-* Code formatting (copy/download)
-* Real-time system monitoring (CPU, RAM, GPU, VRAM, temperatures)
-* WebSocket-based chat
-* Modern chat window layout with clear header and input areas
-* Spinner animation and "TARS is thinking..." indicator during AI response
-* Persistent chat history in browser (localStorage)
-* Always-visible chat scroll bar for long conversations
-* Upcoming: ChromaDB, TTS, voice input
+- Modern chat window layout with clear header and input areas
+- Spinner animation and "TARS is thinking..." indicator during AI response
+- Persistent chat history in browser (localStorage)
+- Always-visible chat scroll bar for long conversations
+- Coqui TTS (Docker, automatisch via systemd)
+- Upcoming: ChromaDB, voice input
 
 ## 🗃️ Database Structure
 
@@ -59,12 +52,19 @@ cd tars-ai-project
 # Run installation script
 sudo bash install/main-install.sh
 
+# Build en start TTS Docker service
+cd app
+bash build-tts-docker.sh
+sudo bash install-tts-service.sh
+
 # Check service status
-sudo systemctl status tars-backend tars-frontend nginx
+sudo systemctl status tts-server.service
+sudo systemctl status tars-backend.service tars-frontend.service nginx
 
 # View logs
-sudo journalctl -u tars-backend -f --no-pager
-sudo journalctl -u tars-frontend -f --no-pager
+sudo journalctl -u tts-server.service -f --no-pager
+sudo journalctl -u tars-backend.service -f --no-pager
+sudo journalctl -u tars-frontend.service -f --no-pager
 sudo tail -f /var/log/nginx/tars-access.log
 ```
 
@@ -85,20 +85,20 @@ sudo tail -f /var/log/nginx/tars-access.log
 
 ```text
 tars-ai-project/
-├── scripts/           # Utility scripts and model management
-├── generated/         # Generated data (not in git)
-│   ├── models/        # AI models
-│   ├── chromadb/      # Vector database (future)
-│   └── uploads/       # Uploaded files
-├── web-ui/            # Web interface
+├── app/               # Python backend, TTS, Docker, systemd services
+│   ├── tts_server.py  # Coqui TTS FastAPI server
+│   ├── Dockerfile     # TTS Docker build
+│   ├── *.service      # Systemd service files
+│   ├── *.sh           # Build/run/install scripts
+├── web_ui/            # Web interface (HTML, JS, CSS, templates, uploads)
 │   ├── static/        # CSS, JS, assets
 │   ├── templates/     # HTML templates
 │   ├── uploads/       # User uploaded files
 │   └── main.py        # FastAPI application
+├── scripts/           # Utility scripts and model management
+├── generated/         # Generated data (not in git)
 ├── install/           # Installation scripts
 ├── docs/              # Documentation
-├── services/          # Systemd service files
-├── venv/              # Python virtual environment
 ├── requirements.txt   # Python dependencies
 └── README.md          # This file
 ```
@@ -142,15 +142,3 @@ See [docs/AI_MODELS.md](docs/AI_MODELS.md) for recommended models.
 ---
 
 **Note:** This project is under active development. Features and documentation may change.
-# TARS AI Assistant Project
-
-![TARS](https://img.shields.io/badge/Project-TARS_AI-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-
-A self-hosted AI chat assistant inspired by Interstellar's TARS, featuring dark mode, file upload capabilities, and persistent memory using ChromaDB.
-
-
----
-
-**Note**: This project is under active development. Features and documentation may change.
