@@ -46,3 +46,21 @@ tars-ai-project/
 - `main-install.sh`: Main installer
 - `python-setup.sh`, `system-dependencies.sh`, etc.: Environment setup
 - `host-setup/`: GPU, KVM, network setup scripts
+
+## Model Management Features
+- **Backend**: FastAPI endpoints for listing, downloading, activating, and viewing details of AI models. Disk space check included.
+- **Frontend**: Settings panel in web UI for model selection, download, details, and language switching (English/Dutch).
+
+### Relevant Files
+- `app/main.py`: Backend API for model management
+- `web_ui/templates/index.html`: Settings panel UI
+- `web_ui/static/js/app.js`: Frontend logic for model management
+
+### Endpoints
+- `/api/models/downloaded`
+- `/api/models/all`
+- `/api/models/details/{model_id}`
+- `/api/models/download/{model_id}`
+- `/api/models/activate/{model_id}`
+- `/api/models/active`
+- `/api/storage/free`

@@ -23,7 +23,19 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("tars-ai-debug")
 
+from fastapi.responses import FileResponse, Response
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="TARS AI Assistant", version="1.0.0")
+
+# Enable CORS globally (optioneel, indien nog niet aanwezig)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Get absolute paths
 BASE_DIR = Path(__file__).parent
@@ -38,6 +50,18 @@ current_model = get_last_used_model()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+# Serve favicon.ico with correct headers
+@app.get("/favicon.ico")
+async def favicon():
+    favicon_path = STATIC_DIR / "favicon.ico"
+    if favicon_path.exists():
+        headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "image/x-icon"
+        }
+        return FileResponse(str(favicon_path), headers=headers, media_type="image/x-icon")
+    return Response(status_code=404)
 import requests
 import subprocess
 
@@ -210,6 +234,12 @@ async def read_root(request: Request):
         "available_models": available_models
     })
 
+# Explicit HEAD route for Nginx compatibility
+@app.head("/")
+async def head_root():
+    return HTMLResponse(status_code=200)
+
+
 @app.get("/api/stats")
 async def get_stats():
     """API endpoint for system statistics"""
@@ -374,7 +404,15 @@ async def delete_conversation(conversation_id: str):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 if __name__ == "__main__":
-    logger.info("Starting TARS AI backend on 0.0.0.0:8000...")
+    import socket
+    def port_in_use(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(("127.0.0.1", port)) == 0
+
+    if port_in_use(8001):
+        logger.error("[ERROR] Port 8001 is already in use. Please stop other processes before starting this server.")
+        exit(1)
+    logger.info("Starting TARS AI Web UI on 0.0.0.0:8001...")
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
 

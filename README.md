@@ -156,13 +156,27 @@ tars-ai-project/
 └── README.md          # Project documentation and usage
 ```
 
-## Directory Descriptions
+## Model Management (Settings Panel)
 
-- **app/**: Backend code, TTS server, Docker, systemd services, install scripts
-- **web_ui/**: Frontend code, static assets, templates, uploads
-- **scripts/**: Bash scripts for backup, healthcheck, permissions, etc.
-- **install/**: Main installer and hardware setup scripts
-- **docs/**: Documentation, changelog, requirements, API info
-- **generated/**: Models, logs, uploads (not tracked in git)
-- **requirements.txt**: Python dependencies
-- **README.md**: Main project documentation
+The settings panel allows you to manage AI models directly from the web UI:
+- **Select active model**: Choose from downloaded models to activate.
+- **View all available models**: See all models that can be downloaded, with details (name, type, size, description).
+- **Download models**: Download new models if enough disk space is available.
+- **Model details**: View model information before downloading.
+- **Disk space check**: Shows available disk space before downloading.
+- **Language selection**: Switch between English (default) and Dutch for the UI.
+
+### Backend Endpoints
+- `/api/models/downloaded`: List downloaded models
+- `/api/models/all`: List all available models
+- `/api/models/details/{model_id}`: Get details for a model
+- `/api/models/download/{model_id}`: Download a model
+- `/api/models/activate/{model_id}`: Activate a model
+- `/api/models/active`: Get active model
+- `/api/storage/free`: Get available disk space
+
+### Frontend Usage
+- Open the settings panel via the navigation bar.
+- Select language (English/Dutch).
+- Manage models: view, download, activate.
+- Disk space and model details are shown automatically.

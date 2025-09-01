@@ -54,6 +54,24 @@
             <div class="spinner"></div>
             <span id="thinking-text">TARS is thinking...</span>
         </div>
+        <div id="settings-panel" class="settings-panel" style="display:none;padding:24px;">
+            <h2>Model Management</h2>
+            <div style="margin-bottom:16px;">
+                <label for="active-model-select">Active Model:</label>
+                <select id="active-model-select"></select>
+                <button id="activate-model-btn">Activate</button>
+            </div>
+            <div id="storage-status" style="margin-bottom:16px;"></div>
+            <h3>Available Models</h3>
+            <div id="models-list"></div>
+            <div style="margin-top:24px;">
+                <label for="language-select">Language:</label>
+                <select id="language-select">
+                    <option value="en" selected>English</option>
+                    <option value="nl">Nederlands</option>
+                </select>
+            </div>
+        </div>
     </div>
     <script src="/static/js/app.js"></script>
 </body>

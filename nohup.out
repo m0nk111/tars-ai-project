@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/flip/tars-ai-project/web_ui/main.py", line 1, in <module>
+    from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Request
+ModuleNotFoundError: No module named 'fastapi'
+Traceback (most recent call last):
+  File "/home/flip/tars-ai-project/web_ui/main.py", line 1, in <module>
+    from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Request
+ModuleNotFoundError: No module named 'fastapi'
