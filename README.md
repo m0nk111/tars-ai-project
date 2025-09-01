@@ -85,60 +85,84 @@ sudo tail -f /var/log/nginx/tars-access.log
 
 ```text
 tars-ai-project/
-├── app/               # Python backend, TTS, Docker, systemd services
+├── app/               # Python backend, TTS server, Dockerfile, systemd service files, install scripts
 │   ├── tts_server.py  # Coqui TTS FastAPI server
 │   ├── Dockerfile     # TTS Docker build
 │   ├── *.service      # Systemd service files
-│   ├── *.sh           # Build/run/install scripts
-├── web_ui/            # Web interface (HTML, JS, CSS, templates, uploads)
-│   ├── static/        # CSS, JS, assets
+│   ├── *.sh           # Build/run/install/uninstall scripts
+├── web_ui/            # Frontend: HTML, JS, CSS, templates, uploads
+│   ├── static/        # CSS, JS, favicon
 │   ├── templates/     # HTML templates
 │   ├── uploads/       # User uploaded files
-│   └── main.py        # FastAPI application
-├── scripts/           # Utility scripts and model management
-├── generated/         # Generated data (not in git)
-├── install/           # Installation scripts
-├── docs/              # Documentation
+│   └── main.py        # FastAPI web server
+├── scripts/           # Utility scripts: backup, healthcheck, permissions, model management
+├── install/           # Main installation and setup scripts
+│   └── host-setup/    # GPU, KVM, network setup scripts
+├── docs/              # Project documentation, changelog, requirements, API info
+├── generated/         # Generated data (models, logs, uploads, not in git)
 ├── requirements.txt   # Python dependencies
-└── README.md          # This file
+└── README.md          # Project documentation and usage
 ```
 
-## 🔧 Hardware Requirements
+### Directory Descriptions
+- **app/**: Backend code, TTS server, Docker, systemd services, install scripts
+- **web_ui/**: Frontend code, static assets, templates, uploads
+- **scripts/**: Bash scripts voor backup, healthcheck, permissies, etc.
+- **install/**: Main installer en hardware setup scripts
+- **docs/**: Documentatie, changelog, requirements, API info
+- **generated/**: Models, logs, uploads (not tracked in git)
+- **requirements.txt**: Python dependencies
+- **README.md**: Main project documentation
 
-- **CPU**: Intel Xeon E5-2697A v4 (16 cores / 32 threads)
-- **RAM**: 128 GB DDR4 ECC
-- **GPU**: NVIDIA RTX 3060 (12 GB GDDR6)
-- **Storage**: 1 TB NVMe SSD
+## 🗃️ Bash Scripts Overview
 
-## 🌐 Language Policy
+**app/**
+- `build-tts-docker.sh`: Build Coqui TTS Docker image
+- `run-tts-docker.sh`: Run TTS Docker container
+- `install-tts-service.sh`: Install TTS systemd service
+- `install-all-services.sh`: Install all systemd services in app/
+- `uninstall-all-services.sh`: Remove all systemd services in app/
+- `list-services.sh`: List available systemd service files
 
-- All code and documentation in English
-- UI elements may be localized
+**scripts/**
+- `backup.sh`: Backup project data
+- `healthcheck.sh`: System health monitoring
+- `fix-permissions.sh`: Fix file and directory permissions
+- `frontend-reload.sh`: Reload frontend
+- `model_manager.py`: Manage AI models
+- `notify-error.sh`: Send error notifications
+- `cleanup-logs.sh`, `cleanup-system.sh`: Maintenance scripts
 
-## 📜 License
+**install/**
+- `main-install.sh`: Main installer
+- `python-setup.sh`, `system-dependencies.sh`, etc.: Environment setup
+- `host-setup/`: GPU, KVM, network setup scripts
 
-MIT License - see [LICENSE](LICENSE).
-
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📞 Support
-
-Open an issue in the GitHub repository for support/questions.
-
-## 🔄 Changelog
-
-See [docs/CHANGELOG.md](docs/CHANGELOG.md) for updates.
-
-## 🤖 AI Models
-
-See [docs/AI_MODELS.md](docs/AI_MODELS.md) for recommended models.
+Scripts die niet meer relevant zijn, kun je veilig verwijderen. Wil je een automatische opschoonfunctie? Geef het aan!
 
 ---
 
-**Note:** This project is under active development. Features and documentation may change.
+# TARS AI Project Structure
+
+```text
+tars-ai-project/
+├── app/               # Python backend, TTS server, Dockerfile, systemd service files, install scripts
+├── web_ui/            # Frontend: HTML, JS, CSS, templates, uploads
+├── scripts/           # Utility scripts: backup, healthcheck, permissions, model management
+├── install/           # Main installation and setup scripts
+├── docs/              # Project documentation, changelog, requirements, API info
+├── generated/         # Generated data (models, logs, uploads, not in git)
+├── requirements.txt   # Python dependencies
+└── README.md          # Project documentation and usage
+```
+
+## Directory Descriptions
+
+- **app/**: Backend code, TTS server, Docker, systemd services, install scripts
+- **web_ui/**: Frontend code, static assets, templates, uploads
+- **scripts/**: Bash scripts for backup, healthcheck, permissions, etc.
+- **install/**: Main installer and hardware setup scripts
+- **docs/**: Documentation, changelog, requirements, API info
+- **generated/**: Models, logs, uploads (not tracked in git)
+- **requirements.txt**: Python dependencies
+- **README.md**: Main project documentation
