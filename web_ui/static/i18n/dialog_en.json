@@ -1,0 +1,15 @@
+{
+  "chat_title": "TARS AI Assistant",
+  "send_button": "Send",
+  "settings": "Settings",
+  "theme": "Theme",
+  "voice": "Voice",
+  "model": "Model",
+  "downloaded_models": "Downloaded Models",
+  "available_models": "Available Models",
+  "activate": "Activate",
+  "download": "Download",
+  "system_message": "System",
+  "user_message": "You",
+  "error_message": "Error"
+}

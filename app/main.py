@@ -1,3 +1,17 @@
+from fastapi import File, UploadFile
+# File upload endpoint
+@app.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        upload_dir = "uploads"
+        os.makedirs(upload_dir, exist_ok=True)
+        file_location = os.path.join(upload_dir, file.filename)
+        with open(file_location, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        return {"status": "success", "filename": file.filename, "message": "File uploaded successfully."}
+    except Exception as e:
+        logger.error(f"Upload error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel

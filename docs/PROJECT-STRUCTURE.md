@@ -14,6 +14,11 @@ tars-ai-project/
 
 ## Directory Descriptions
 
+- **Poort-range conventie:**
+	- Tars-ai gebruikt uitsluitend poorten 8000-8999 voor backend, frontend en services (behalve standaard 80/443).
+	- Nadscab gebruikt uitsluitend poorten 7000-7999 voor backend, frontend en services (behalve standaard 80/443).
+	- Deze scheiding voorkomt conflicten en maakt netwerkbeheer eenvoudig.
+
 - **app/**: Backend code, TTS server, Docker, systemd services, install scripts
 - **web_ui/**: Frontend code, static assets, templates, uploads
 - **scripts/**: Bash scripts for backup, healthcheck, permissions, etc.

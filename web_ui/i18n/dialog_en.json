@@ -1,0 +1,18 @@
+{
+  "settings_title": "Model Management",
+  "active_model": "Active Model:",
+  "activate": "Activate",
+  "available_space": "Available space: {free_gb} GB",
+  "no_models": "No models",
+  "error_loading": "Error loading",
+  "downloaded": "Downloaded",
+  "download": "Download",
+  "name": "Name",
+  "id": "ID",
+  "type": "Type",
+  "size": "Size",
+  "description": "Description",
+  "action": "Action",
+  "no_models_available": "No models available",
+  "error_loading_models": "Error loading models"
+}

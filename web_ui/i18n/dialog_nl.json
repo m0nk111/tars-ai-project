@@ -1,0 +1,18 @@
+{
+  "settings_title": "Modelbeheer",
+  "active_model": "Actief model:",
+  "activate": "Activeren",
+  "available_space": "Beschikbare ruimte: {free_gb} GB",
+  "no_models": "Geen modellen",
+  "error_loading": "Fout bij laden",
+  "downloaded": "Gedownload",
+  "download": "Downloaden",
+  "name": "Naam",
+  "id": "ID",
+  "type": "Type",
+  "size": "Grootte",
+  "description": "Beschrijving",
+  "action": "Actie",
+  "no_models_available": "Geen modellen beschikbaar",
+  "error_loading_models": "Fout bij laden van modellen"
+}
